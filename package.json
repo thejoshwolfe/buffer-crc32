@@ -22,12 +22,14 @@
   },
   "scripts": {
     "test": "tap tests/*.test.js --reporter classic",
+    "benchmark": "node benchmarks/crc.bench.js",
     "build": "npx unbuild@2.0.0 && npx cpy-cli index.d.ts dist --rename=index.d.cts && npx cpy-cli index.d.ts dist --rename=index.d.mts",
     "prepublishOnly": "npm run build",
     "format": "prettier --write --log-level warn \"**/*.{json,md,js}\""
   },
   "dependencies": {},
   "devDependencies": {
+    "micro-bmark": "^0.3.1",
     "prettier": "^3.2.4",
     "tap": "~11.1.5"
   },
