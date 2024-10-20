@@ -22,7 +22,7 @@
   },
   "scripts": {
     "test": "tap tests/*.test.js",
-    "build": "unbuild && cpy-cli index.d.ts dist --rename=index.d.cts && cpy-cli index.d.ts dist --rename=index.d.mts",
+    "build": "npx unbuild && npx cpy-cli index.d.ts dist --rename=index.d.cts && npx cpy-cli index.d.ts dist --rename=index.d.mts",
     "prepublishOnly": "npm run build",
     "format": "prettier --write --log-level warn \"**/*.{json,md,js}\""
   },
