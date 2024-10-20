@@ -54,15 +54,43 @@ function bufferizeInt(num) {
 }
 
 function _crc32(buf, previous) {
+  // Parameter validation and coercion.
   buf = ensureBuffer(buf);
   if (Buffer.isBuffer(previous)) {
     previous = previous.readUInt32BE(0);
   }
+  // Delegate to the implementation.
+  return _impl(buf, previous);
+}
+
+function _jsImpl(buf, previous) {
   let crc = ~~previous ^ -1;
   for (var n = 0; n < buf.length; n++) {
     crc = CRC_TABLE[(crc ^ buf[n]) & 0xff] ^ (crc >>> 8);
   }
   return crc ^ -1;
+}
+function _impl(buf, previous) {
+  // Returns a signed integer.
+  // After this function is called once, references to it are replaced by a different implementation.
+
+  // Determine which implementation to use.
+  try {
+    var nodeCrc32 = require('node:zlib').crc32;
+  } catch (e) {
+    // Older versions of node don't support the `node:` prefix,
+    // and also don't have the crc32 implementation anyway.
+  }
+  if (typeof nodeCrc32 === 'function') {
+    // Use node implementation.
+    _impl = function _nodeImpl(buf, previous) {
+      // Node returns an unsigned integer. Coerce to signed.
+      return nodeCrc32(buf, previous) | 0;
+    };
+  } else {
+    // Use JS implementation.
+    _impl = _jsImpl;
+  }
 }
 
 function crc32() {
